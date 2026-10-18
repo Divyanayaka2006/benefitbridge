@@ -30,6 +30,7 @@ application with its action checklist. I ran it on an IBM LinuxONE (s390x) virtu
 machine inside a JupyterLab container.
 
 ## Example output
+![Output on IBM LinuxONE](Screenshot%202026-10-18%20151710.png)
 Rejection risk: 0.98 | Likely reason: expired_address_proof
 1. Replace address proof with one dated within the last 90 days.
 2. Make the name on the form match your ID exactly.
