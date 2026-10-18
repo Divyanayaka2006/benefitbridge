@@ -118,7 +118,18 @@ def check_application(app: dict) -> dict:
         "evidence": [ev for _, ev, _ in issues],
         "action_checklist": checklist or ["No problems found. Application looks ready to submit."],
     }
-
+def save_feature_importance(path="feature_importance.png"):
+    """Bar chart of which inputs the Random Forest relies on most."""
+    import matplotlib.pyplot as plt
+    imp = pd.Series(model.feature_importances_, index=FEATURES).sort_values()
+    fig, ax = plt.subplots(figsize=(8, 5))
+    imp.plot.barh(ax=ax, color="#2b6cb0")
+    ax.set_xlabel("Importance (Random Forest, simulated data)")
+    ax.set_title("BenefitBridge: which inputs drive the prediction")
+    fig.tight_layout()
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"Saved {path}")
 
 # ---------------------------------------------------------------- 4. DEMO
 if __name__ == "__main__":
@@ -141,3 +152,4 @@ if __name__ == "__main__":
     print(f"\nSimulated test set: {would_fail.mean():.0%} of applications would fail;")
     print(f"checker flags {(flagged & would_fail).sum()/would_fail.sum():.0%} of them before submission "
           f"(false alarms: {(flagged & ~would_fail).sum()/ (~would_fail).sum():.0%}).")
+    save_feature_importance()
