@@ -37,6 +37,19 @@ Rejection risk: 0.98 | Likely reason: expired_address_proof
 
 ## Built with
 Python, scikit-learn, pandas, numpy. Written with help from an AI assistant (Claude).
+
+## Feature importance
+
+![Feature importance](feature_importance.png)
+
+The model relies on the same factors the simulator's rules use (match
+scores, proof documents, document age). `first_time_applicant` scores
+near zero because the simulator never uses it, which is a useful sanity
+check that the model is learning the rules rather than noise. This is
+expected with simulated data and is not evidence of real-world
+performance. The risk score comes from the model, while the evidence and
+checklist use explicit rules, so every recommendation can be traced.
+
 ## How to run
 ```bash
 pip install -r requirements.txt
