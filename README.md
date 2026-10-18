@@ -37,3 +37,19 @@ Rejection risk: 0.98 | Likely reason: expired_address_proof
 
 ## Built with
 Python, scikit-learn, pandas, numpy. Written with help from an AI assistant (Claude).
+## How to run
+```bash
+pip install -r requirements.txt
+python benefitbridge.py
+```
+
+The script generates simulated applications, trains a Random Forest,
+prints evaluation results, and shows a sample readiness report with an
+action checklist. It runs on any machine with Python 3.9+, and I tested
+it on an IBM LinuxONE (s390x) virtual server.
+
+## Limitations
+
+- All data is simulated, so the accuracy figures are not real-world.
+- This is a readiness checker, not an eligibility decision.
+- Real use would need real data, fairness testing and human review.
