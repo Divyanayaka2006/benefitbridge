@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 
 from benefitbridge import EVIDENCE, FEATURES, PRIORITY, check_application
+from explain import LABELS, MATCH_TEXT, VERIFY_TEXT, explain
 from matching import income_gap, match_score
 from messages import TEXT
 from proofcheck import check_proof
@@ -184,6 +185,14 @@ def schemes_tab(ui, lang):
         st.markdown(f"**{t['name']}**")
         st.write(f"{ui['sf_gives']}: {t['gives']}")
         st.write(f"{ui['sf_check']}: {t['check']}")
+        matched, verify = explain(sid, answers)
+        with st.expander(LABELS[lang]["why"] + " / " + LABELS[lang]["verify"]):
+            st.markdown(f"**{LABELS[lang]['why']}**")
+            for key in matched:
+                st.write("✔ " + MATCH_TEXT[lang][key])
+            st.markdown(f"**{LABELS[lang]['verify']}**")
+            for key in verify:
+                st.write("➤ " + VERIFY_TEXT[lang][key])
         st.markdown(f"[{ui['sf_link']}]({LINKS[sid]})")
     st.caption(ui["sf_disclaimer"])
     st.caption(ui["sf_checked"].format(date=LAST_CHECKED))
