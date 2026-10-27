@@ -2,9 +2,10 @@
 # for EVERY combination of answers, and that no text is missing.
 from itertools import product
 
-from explain import (LABELS, MATCH_TEXT, RULES, TESTS, VERIFY, VERIFY_TEXT,
-                     explain, scheme_applies)
-from schemes import INFO, ORDER, find_schemes
+from explain import (CHECKABLE, SUMMARY, build_summary, NO_LINK, DOC_FOOTER, DOC_LABEL, DOC_TEXT, DOCS, LABELS, MATCH_TEXT, RULES, TESTS, VERIFY, VERIFY_TEXT,
+                     documents, explain, scheme_applies)
+from schemes import INFO, LAST_CHECKED, LINKS, ORDER, find_schemes
+from messages import TEXT
 
 count = 0
 for state, age, gender, ration, wh, tax, govt, power, yuva, farm in product(
@@ -28,5 +29,25 @@ for lang in INFO:
     for items in VERIFY.values():
         for v, _ in items:
             assert v in VERIFY_TEXT[lang], (lang, v)
-assert set(RULES) == set(ORDER) == set(VERIFY)
+    assert lang in DOC_LABEL and lang in DOC_FOOTER and lang in DOC_TEXT, lang
+    for items in DOCS.values():
+        for d, _ in items:
+            assert d in DOC_TEXT[lang], (lang, d)
+assert set(LINKS) <= set(ORDER)
+assert all(d in next(iter(DOC_TEXT.values())) for d in CHECKABLE)
+# the summary builds in every language, ticks show up, nothing crashes
+p = dict(state="KA", age=75, gender="W", ration="BPL", woman_head=True,
+         tax=False, govt=False, power=True, yuva=False, farm=True)
+hits = find_schemes(p)
+for lang in INFO:
+    ui = TEXT[lang]["ui"]
+    none = build_summary(lang, ui, hits, p, set(), INFO, LINKS, LAST_CHECKED)
+    allx = {(s, d) for s in hits for d in DOC_TEXT[lang] if d in CHECKABLE}
+    some = build_summary(lang, ui, hits, p, allx, INFO, LINKS, LAST_CHECKED)
+    assert INFO[lang][hits[0]]["name"] in none
+    assert "[ ]" in none and "[x]" not in none
+    assert "[x]" in some and SUMMARY[lang]["none_left"] in some
+assert set(LINKS) <= set(ORDER)
+assert all(lang in NO_LINK for lang in INFO)
+assert set(RULES) == set(ORDER) == set(VERIFY) == set(DOCS)
 print(f"OK: {count} answer combinations match find_schemes; all 3 languages complete.")

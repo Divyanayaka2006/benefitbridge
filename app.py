@@ -4,7 +4,9 @@ import pandas as pd
 import streamlit as st
 
 from benefitbridge import EVIDENCE, FEATURES, PRIORITY, check_application
-from explain import LABELS, MATCH_TEXT, VERIFY_TEXT, explain
+from explain import (CHECKABLE, DOC_FOOTER, DOC_LABEL, DOC_TEXT, LABELS,
+                     MATCH_TEXT, NO_LINK, SUMMARY, VERIFY_TEXT, build_summary,
+                     documents, explain)
 from matching import income_gap, match_score
 from messages import TEXT
 from proofcheck import check_proof
@@ -180,6 +182,7 @@ def schemes_tab(ui, lang):
     hits = find_schemes(answers)
     if not hits:
         st.info(ui["sf_none"])
+    have = set()  # (scheme, document) pairs the person ticked
     for sid in hits:
         t = INFO[lang][sid]
         st.markdown(f"**{t['name']}**")
@@ -193,7 +196,31 @@ def schemes_tab(ui, lang):
             st.markdown(f"**{LABELS[lang]['verify']}**")
             for key in verify:
                 st.write("➤ " + VERIFY_TEXT[lang][key])
-        st.markdown(f"[{ui['sf_link']}]({LINKS[sid]})")
+            st.markdown(f"**{DOC_LABEL[lang]}**")
+            st.caption(SUMMARY[lang]["tick"])
+            for key in documents(sid, matched):
+                if key in CHECKABLE:
+                    if st.checkbox("📄 " + DOC_TEXT[lang][key],
+                                   key=f"have_{sid}_{key}"):
+                        have.add((sid, key))
+                else:
+                    st.write("📄 " + DOC_TEXT[lang][key])
+            st.caption(DOC_FOOTER[lang])
+        if LINKS.get(sid):
+            st.markdown(f"[{ui['sf_link']}]({LINKS[sid]})")
+        else:
+            st.caption(NO_LINK[lang])
+    if hits:
+        st.divider()
+        st.subheader(SUMMARY[lang]["title"])
+        st.download_button(
+            SUMMARY[lang]["download"],
+            data=build_summary(lang, ui, hits, answers, have, INFO, LINKS,
+                               LAST_CHECKED).encode("utf-8-sig"),
+            file_name="benefitbridge_summary.txt",
+            mime="text/plain",
+        )
+        st.caption(SUMMARY[lang]["check_tab"].format(tab=ui["tab_check"]))
     st.caption(ui["sf_disclaimer"])
     st.caption(ui["sf_checked"].format(date=LAST_CHECKED))
 

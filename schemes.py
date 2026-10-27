@@ -18,7 +18,8 @@ LINKS = {
     "gruha_lakshmi": "https://sevasindhugs.karnataka.gov.in/",
     "gruha_jyothi": "https://sevasindhugs.karnataka.gov.in/",
     "anna_bhagya": "https://ahara.kar.nic.in/",
-    "shakti": "https://ksrtc.karnataka.gov.in",
+    # No "shakti" link on purpose: the KSRTC site did not open. app.py shows
+    # a "ask at your nearest centre" note for schemes without a link.
     "yuva_nidhi": "https://sevasindhugs.karnataka.gov.in/",
     "pmjay": "https://pmjay.gov.in/",
     "pmkisan": "https://pmkisan.gov.in/",
@@ -70,7 +71,7 @@ INFO = {
         "shakti": {
             "name": "Shakti",
             "gives": "Free travel for women and transgender persons in ordinary (non-AC, non-luxury) state-run buses within Karnataka.",
-            "check": "Carry a valid photo ID. A smart card is being introduced, so check the KSRTC website for the current rules.",
+            "check": "Carry a valid photo ID. A smart card is being introduced, so ask at your nearest Karnataka One or Grama One centre for the current rules.",
         },
         "yuva_nidhi": {
             "name": "Yuva Nidhi",
@@ -107,7 +108,7 @@ INFO = {
         "shakti": {
             "name": "शक्ति",
             "gives": "कर्नाटक के भीतर राज्य की साधारण (बिना AC, बिना लग्ज़री) बसों में महिलाओं और ट्रांसजेंडर व्यक्तियों के लिए मुफ़्त यात्रा।",
-            "check": "मान्य फ़ोटो पहचान पत्र साथ रखें। स्मार्ट कार्ड शुरू किया जा रहा है, इसलिए मौजूदा नियमों के लिए KSRTC की वेबसाइट देखें।",
+            "check": "मान्य फ़ोटो पहचान पत्र साथ रखें। स्मार्ट कार्ड शुरू किया जा रहा है, इसलिए मौजूदा नियमों के लिए अपने नज़दीकी कर्नाटक वन या ग्राम वन केंद्र में पूछें।",
         },
         "yuva_nidhi": {
             "name": "युवा निधि",
@@ -144,7 +145,7 @@ INFO = {
         "shakti": {
             "name": "ಶಕ್ತಿ",
             "gives": "ಕರ್ನಾಟಕದೊಳಗೆ ರಾಜ್ಯ ಸಾರಿಗೆ ಸಾಮಾನ್ಯ (ಎಸಿ ಅಲ್ಲದ, ಐಷಾರಾಮಿ ಅಲ್ಲದ) ಬಸ್ಸುಗಳಲ್ಲಿ ಮಹಿಳೆಯರು ಮತ್ತು ತೃತೀಯ ಲಿಂಗಿಗಳಿಗೆ ಉಚಿತ ಪ್ರಯಾಣ.",
-            "check": "ಮಾನ್ಯ ಫೋಟೋ ಗುರುತಿನ ಚೀಟಿ ಜೊತೆಗಿರಲಿ. ಸ್ಮಾರ್ಟ್ ಕಾರ್ಡ್ ಜಾರಿಗೆ ಬರುತ್ತಿದೆ, ಆದ್ದರಿಂದ ಈಗಿನ ನಿಯಮಗಳಿಗೆ KSRTC ಜಾಲತಾಣ ನೋಡಿ.",
+            "check": "ಮಾನ್ಯ ಫೋಟೋ ಗುರುತಿನ ಚೀಟಿ ಜೊತೆಗಿರಲಿ. ಸ್ಮಾರ್ಟ್ ಕಾರ್ಡ್ ಜಾರಿಗೆ ಬರುತ್ತಿದೆ, ಆದ್ದರಿಂದ ಈಗಿನ ನಿಯಮಗಳಿಗಾಗಿ ಹತ್ತಿರದ ಕರ್ನಾಟಕ ಒನ್ ಅಥವಾ ಗ್ರಾಮ ಒನ್ ಕೇಂದ್ರದಲ್ಲಿ ಕೇಳಿ.",
         },
         "yuva_nidhi": {
             "name": "ಯುವ ನಿಧಿ",
