@@ -6,7 +6,8 @@ from explain import (LINK_FALLBACK, CHECKABLE, SUMMARY, build_summary, NO_LINK, 
                      documents, explain, scheme_applies)
 from schemes import INFO, LAST_CHECKED, LINKS, ORDER, find_schemes
 from messages import TEXT
-from steps import ANSWER_KEYS, QUESTIONS, STEP_TEXT
+from steps import (ANSWER_KEYS, AUDIO_DIR, LANG_CODE, LISTEN, QUESTIONS,
+                   STEP_TEXT)
 
 count = 0
 for state, age, gender, ration, wh, tax, govt, power, yuva, farm in product(
@@ -48,6 +49,9 @@ for lang in INFO:
             assert q["ui"] in TEXT[lang]["ui"], (lang, q["ui"])
         for opt in q.get("options", []):
             assert "o_" + opt in TEXT[lang]["ui"], (lang, opt)
+for lang in INFO:
+    assert lang in LANG_CODE and lang in AUDIO_DIR and lang in LISTEN, lang
+    assert {"listen", "no_voice"} <= set(LISTEN[lang]), lang
 assert set(LINKS) <= set(ORDER)
 assert all(lang in LINK_FALLBACK for lang in INFO)
 assert all(d in next(iter(DOC_TEXT.values())) for d in CHECKABLE)

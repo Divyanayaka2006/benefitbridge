@@ -1,14 +1,17 @@
+import json
 from datetime import date, timedelta
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
 from benefitbridge import EVIDENCE, FEATURES, PRIORITY, check_application
 from explain import (CHECKABLE, DOC_FOOTER, DOC_LABEL, DOC_TEXT, LABELS,
                      LINK_FALLBACK, MATCH_TEXT, NO_LINK, SUMMARY, VERIFY_TEXT, build_summary,
                      documents, explain)
 from matching import income_gap, match_score
-from steps import QUESTIONS, STEP_TEXT
+from steps import (AUDIO_DIR, LANG_CODE, LISTEN, QUESTIONS, STEP_TEXT)
 from messages import TEXT
 from proofcheck import check_proof
 from schemes import INFO, LAST_CHECKED, LINKS, find_schemes
@@ -145,6 +148,50 @@ def checker_tab(ui, issue_text):
         )
 
 
+LISTEN_HTML = """
+<button id="b" style="font-size:16px;padding:10px 18px;border:1px solid #999;
+ border-radius:8px;background:#fff;color:#111;cursor:pointer">🔊 __LABEL__</button>
+<span id="m" style="font-size:14px;margin-left:8px;color:#b00"></span>
+<script>
+const d = __PAYLOAD__;
+const b = document.getElementById('b'), m = document.getElementById('m');
+b.onclick = () => {
+  m.textContent = '';
+  const s = window.speechSynthesis;
+  if (!s) { m.textContent = d.no; return; }
+  s.cancel();
+  const all = s.getVoices();
+  const want = d.l.toLowerCase();
+  const fit = all.filter(v => v.lang.replace('_', '-').toLowerCase().startsWith(want.slice(0, 2)));
+  if (all.length && !fit.length) { m.textContent = d.no; return; }
+  const u = new SpeechSynthesisUtterance(d.t);
+  u.lang = d.l;
+  if (fit.length) {
+    u.voice = fit.find(v => v.lang.replace('_', '-').toLowerCase() === want) || fit[0];
+  }
+  s.speak(u);
+};
+</script>
+"""
+
+
+def listen(text, lang, audio_id):
+    """Read-aloud button for FIXED text. Plays audio/<lang>/<id>.mp3 if it
+    exists, otherwise speaks with the device's own voice in the browser."""
+    f = Path(__file__).parent / "audio" / AUDIO_DIR[lang] / f"{audio_id}.mp3"
+    if f.exists():
+        st.audio(str(f))
+        return
+    payload = json.dumps({"t": text, "l": LANG_CODE[lang],
+                          "no": LISTEN[lang]["no_voice"]}).replace("</", "<\\/")
+    page = (LISTEN_HTML.replace("__PAYLOAD__", payload)
+            .replace("__LABEL__", LISTEN[lang]["listen"]))  # fixed text only
+    if hasattr(st, "iframe"):  # newer Streamlit
+        st.iframe(page, height=60)
+    else:  # older Streamlit
+        components.html(page, height=60)
+
+
 def all_at_once(ui):
     """The original form: every question on one screen."""
     show = lambda code: ui["o_" + code]
@@ -210,7 +257,12 @@ def one_at_a_time(ui, lang):
     q = QUESTIONS[i]
     st.progress(i / total)
     st.caption(T["progress"].format(n=i + 1, total=total))
-    st.subheader(q["icon"] + "  " + (ui[q["ui"]] if "ui" in q else T[q["text"]]))
+    qtext = ui[q["ui"]] if "ui" in q else T[q["text"]]
+    st.subheader(q["icon"] + "  " + qtext)
+    spoken = qtext
+    if q["kind"] == "choice":  # also read the choices out
+        spoken += ". " + ". ".join(ui["o_" + o] for o in q["options"])
+    listen(spoken, lang, "q_" + q["key"])
 
     if q["kind"] == "choice":
         for opt in q["options"]:
@@ -242,9 +294,11 @@ def show_results(ui, lang, answers):
         t = INFO[lang][sid]
         st.markdown(f"**{t['name']}**")
         st.write(f"{ui['sf_gives']}: {t['gives']}")
-        st.write(f"{ui['sf_check']}: {t['check']}")
+        listen(f"{t['name']}. {t['gives']}", lang, "scheme_" + sid)
         matched, verify = explain(sid, answers)
         with st.expander(LABELS[lang]["why"] + " / " + LABELS[lang]["verify"]):
+            st.markdown(f"**{ui['sf_check']}**")
+            st.write(t["check"])
             st.markdown(f"**{LABELS[lang]['why']}**")
             for key in matched:
                 st.write("✔ " + MATCH_TEXT[lang][key])
@@ -262,7 +316,11 @@ def show_results(ui, lang, answers):
                     st.write("📄 " + DOC_TEXT[lang][key])
             st.caption(DOC_FOOTER[lang])
         if LINKS.get(sid):
-            st.markdown(f"[{ui['sf_link']}]({LINKS[sid]})")
+            if hasattr(st, "link_button"):
+                st.link_button(ui["sf_link"], LINKS[sid],
+                               use_container_width=True)
+            else:  # older Streamlit versions
+                st.markdown(f"[{ui['sf_link']}]({LINKS[sid]})")
             st.caption(LINK_FALLBACK[lang])
         else:
             st.caption(NO_LINK[lang])

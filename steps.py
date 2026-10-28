@@ -71,3 +71,24 @@ STEP_TEXT = {
         "q_farm": "ನಿಮ್ಮ ಕುಟುಂಬದ ಹೆಸರಿನಲ್ಲಿ ಕೃಷಿ ಭೂಮಿ ಇದೆಯೇ?",
     },
 }
+
+
+# ---------------------------------------------------------------------------
+# Read-aloud ("Listen") buttons. Only FIXED text is spoken: questions, scheme
+# names and what a scheme gives. The person's own answers are never spoken or
+# sent anywhere.
+#
+# If a file audio/<dir>/<id>.mp3 exists (a real recording, or audio made ahead
+# of time) it is played. Otherwise the device's own voice is used in the
+# browser. ids: q_state, q_age, q_gender, ... and scheme_<scheme id>.
+LANG_CODE = {"English": "en-IN", "हिन्दी": "hi-IN", "ಕನ್ನಡ": "kn-IN"}
+AUDIO_DIR = {"English": "en", "हिन्दी": "hi", "ಕನ್ನಡ": "kn"}
+
+LISTEN = {
+    "English": {"listen": "Listen",
+                "no_voice": "This device has no voice for this language."},
+    "हिन्दी": {"listen": "सुनें",
+               "no_voice": "इस डिवाइस में इस भाषा की आवाज़ नहीं है।"},
+    "ಕನ್ನಡ": {"listen": "ಕೇಳಿ",
+              "no_voice": "ಈ ಸಾಧನದಲ್ಲಿ ಈ ಭಾಷೆಯ ಧ್ವನಿ ಇಲ್ಲ."},
+}
