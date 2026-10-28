@@ -17,7 +17,6 @@ ORDER = ["gruha_lakshmi", "gruha_jyothi", "anna_bhagya", "shakti",
 LINKS = {
     "gruha_lakshmi": "https://sevasindhugs.karnataka.gov.in/",
     "gruha_jyothi": "https://sevasindhugs.karnataka.gov.in/",
-    "anna_bhagya": "https://ahara.kar.nic.in/",
     "shakti": "https://ksrtc.karnataka.gov.in",
     "yuva_nidhi": "https://sevasindhugs.karnataka.gov.in/",
     "pmjay": "https://pmjay.gov.in/",
