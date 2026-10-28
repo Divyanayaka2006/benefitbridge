@@ -337,8 +337,18 @@ def build_summary(lang, ui, hits, answers, have, info, links, checked):
                 lines.append("     - " + DOC_TEXT[lang][d])
         if links.get(sid):
             lines.append(f"   {ui['sf_link']}: {links[sid]}")
+            lines.append("   " + LINK_FALLBACK[lang])
         else:
             lines.append("   " + NO_LINK[lang])
         lines.append("")
     lines.append(DOC_FOOTER[lang])
     return "\n".join(lines)
+
+
+# Shown under every "Official site" link, because government sites are
+# sometimes slow or down.
+LINK_FALLBACK = {
+    "English": "If the site does not open, ask at your nearest Karnataka One or Grama One centre.",
+    "हिन्दी": "अगर वेबसाइट न खुले, तो अपने नज़दीकी कर्नाटक वन या ग्राम वन केंद्र में पूछें।",
+    "ಕನ್ನಡ": "ಜಾಲತಾಣ ತೆರೆಯದಿದ್ದರೆ, ಹತ್ತಿರದ ಕರ್ನಾಟಕ ಒನ್ ಅಥವಾ ಗ್ರಾಮ ಒನ್ ಕೇಂದ್ರದಲ್ಲಿ ಕೇಳಿ.",
+}

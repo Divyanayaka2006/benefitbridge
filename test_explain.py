@@ -2,7 +2,7 @@
 # for EVERY combination of answers, and that no text is missing.
 from itertools import product
 
-from explain import (CHECKABLE, SUMMARY, build_summary, NO_LINK, DOC_FOOTER, DOC_LABEL, DOC_TEXT, DOCS, LABELS, MATCH_TEXT, RULES, TESTS, VERIFY, VERIFY_TEXT,
+from explain import (LINK_FALLBACK, CHECKABLE, SUMMARY, build_summary, NO_LINK, DOC_FOOTER, DOC_LABEL, DOC_TEXT, DOCS, LABELS, MATCH_TEXT, RULES, TESTS, VERIFY, VERIFY_TEXT,
                      documents, explain, scheme_applies)
 from schemes import INFO, LAST_CHECKED, LINKS, ORDER, find_schemes
 from messages import TEXT
@@ -34,6 +34,7 @@ for lang in INFO:
         for d, _ in items:
             assert d in DOC_TEXT[lang], (lang, d)
 assert set(LINKS) <= set(ORDER)
+assert all(lang in LINK_FALLBACK for lang in INFO)
 assert all(d in next(iter(DOC_TEXT.values())) for d in CHECKABLE)
 # the summary builds in every language, ticks show up, nothing crashes
 p = dict(state="KA", age=75, gender="W", ration="BPL", woman_head=True,

@@ -5,7 +5,7 @@ import streamlit as st
 
 from benefitbridge import EVIDENCE, FEATURES, PRIORITY, check_application
 from explain import (CHECKABLE, DOC_FOOTER, DOC_LABEL, DOC_TEXT, LABELS,
-                     MATCH_TEXT, NO_LINK, SUMMARY, VERIFY_TEXT, build_summary,
+                     LINK_FALLBACK, MATCH_TEXT, NO_LINK, SUMMARY, VERIFY_TEXT, build_summary,
                      documents, explain)
 from matching import income_gap, match_score
 from messages import TEXT
@@ -208,6 +208,7 @@ def schemes_tab(ui, lang):
             st.caption(DOC_FOOTER[lang])
         if LINKS.get(sid):
             st.markdown(f"[{ui['sf_link']}]({LINKS[sid]})")
+            st.caption(LINK_FALLBACK[lang])
         else:
             st.caption(NO_LINK[lang])
     if hits:

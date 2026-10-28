@@ -18,8 +18,7 @@ LINKS = {
     "gruha_lakshmi": "https://sevasindhugs.karnataka.gov.in/",
     "gruha_jyothi": "https://sevasindhugs.karnataka.gov.in/",
     "anna_bhagya": "https://ahara.kar.nic.in/",
-    # No "shakti" link on purpose: the KSRTC site did not open. app.py shows
-    # a "ask at your nearest centre" note for schemes without a link.
+    "shakti": "https://ksrtc.karnataka.gov.in",
     "yuva_nidhi": "https://sevasindhugs.karnataka.gov.in/",
     "pmjay": "https://pmjay.gov.in/",
     "pmkisan": "https://pmkisan.gov.in/",
