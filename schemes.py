@@ -19,7 +19,7 @@ LINKS = {
     "gruha_jyothi": "https://sevasindhugs.karnataka.gov.in/",
     "shakti": "https://ksrtc.karnataka.gov.in",
     "yuva_nidhi": "https://sevasindhugs.karnataka.gov.in/",
-    "pmjay": "https://pmjay.gov.in/",
+    "pmjay": "https://pmjay.nha.gov.in/",
     "pmkisan": "https://pmkisan.gov.in/",
 }
 
