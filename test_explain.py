@@ -6,6 +6,7 @@ from explain import (LINK_FALLBACK, CHECKABLE, SUMMARY, build_summary, NO_LINK, 
                      documents, explain, scheme_applies)
 from schemes import INFO, LAST_CHECKED, LINKS, ORDER, find_schemes
 from messages import TEXT
+from steps import ANSWER_KEYS, QUESTIONS, STEP_TEXT
 
 count = 0
 for state, age, gender, ration, wh, tax, govt, power, yuva, farm in product(
@@ -33,6 +34,20 @@ for lang in INFO:
     for items in DOCS.values():
         for d, _ in items:
             assert d in DOC_TEXT[lang], (lang, d)
+# one-question-at-a-time mode: covers every answer find_schemes needs, and
+# every language has every text
+assert [q["key"] for q in QUESTIONS] == ANSWER_KEYS
+for lang in INFO:
+    assert lang in STEP_TEXT, lang
+    for k in ["mode", "step", "all", "progress", "yes", "no", "back", "next", "restart"]:
+        assert k in STEP_TEXT[lang], (lang, k)
+    for q in QUESTIONS:
+        if "text" in q:
+            assert q["text"] in STEP_TEXT[lang], (lang, q["text"])
+        else:
+            assert q["ui"] in TEXT[lang]["ui"], (lang, q["ui"])
+        for opt in q.get("options", []):
+            assert "o_" + opt in TEXT[lang]["ui"], (lang, opt)
 assert set(LINKS) <= set(ORDER)
 assert all(lang in LINK_FALLBACK for lang in INFO)
 assert all(d in next(iter(DOC_TEXT.values())) for d in CHECKABLE)

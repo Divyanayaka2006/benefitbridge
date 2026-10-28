@@ -8,6 +8,7 @@ from explain import (CHECKABLE, DOC_FOOTER, DOC_LABEL, DOC_TEXT, LABELS,
                      LINK_FALLBACK, MATCH_TEXT, NO_LINK, SUMMARY, VERIFY_TEXT, build_summary,
                      documents, explain)
 from matching import income_gap, match_score
+from steps import QUESTIONS, STEP_TEXT
 from messages import TEXT
 from proofcheck import check_proof
 from schemes import INFO, LAST_CHECKED, LINKS, find_schemes
@@ -144,9 +145,8 @@ def checker_tab(ui, issue_text):
         )
 
 
-def schemes_tab(ui, lang):
-    st.subheader(ui["sf_title"])
-    st.caption(ui["sf_intro"])
+def all_at_once(ui):
+    """The original form: every question on one screen."""
     show = lambda code: ui["o_" + code]
     with st.form("schemes"):
         c1, c2 = st.columns(2)
@@ -174,10 +174,65 @@ def schemes_tab(ui, lang):
             "woman_head": woman_head, "tax": tax, "govt": govt,
             "power": power, "yuva": yuva, "farm": farm,
         }
-    answers = st.session_state.get("sf")
-    if not answers:
-        return
+    return st.session_state.get("sf")
 
+
+def _pick(key, value, nxt):
+    st.session_state["step_ans"][key] = value
+    st.session_state["step_i"] = nxt
+
+
+def _pick_age(nxt):
+    _pick("age", st.session_state["step_age"], nxt)
+
+
+def _go(n):
+    st.session_state["step_i"] = n
+
+
+def _restart():
+    st.session_state["step_ans"] = {}
+    st.session_state["step_i"] = 0
+
+
+def one_at_a_time(ui, lang):
+    """One big question per screen. Returns the answers when all are done."""
+    T = STEP_TEXT[lang]
+    total = len(QUESTIONS)
+    st.session_state.setdefault("step_ans", {})
+    i = st.session_state.setdefault("step_i", 0)
+
+    if i >= total:
+        st.button(T["back"], key="done_back", on_click=_go, args=(total - 1,))
+        st.button(T["restart"], key="done_restart", on_click=_restart)
+        return dict(st.session_state["step_ans"])
+
+    q = QUESTIONS[i]
+    st.progress(i / total)
+    st.caption(T["progress"].format(n=i + 1, total=total))
+    st.subheader(q["icon"] + "  " + (ui[q["ui"]] if "ui" in q else T[q["text"]]))
+
+    if q["kind"] == "choice":
+        for opt in q["options"]:
+            st.button(ui["o_" + opt], key=f"a{i}_{opt}", on_click=_pick,
+                      args=(q["key"], opt, i + 1), use_container_width=True)
+    elif q["kind"] == "yesno":
+        st.button(T["yes"], key=f"a{i}_yes", on_click=_pick,
+                  args=(q["key"], True, i + 1), use_container_width=True)
+        st.button(T["no"], key=f"a{i}_no", on_click=_pick,
+                  args=(q["key"], False, i + 1), use_container_width=True)
+    else:  # number (age)
+        st.number_input(T["q_age"], 0, 110,
+                        st.session_state["step_ans"].get("age", 30),
+                        key="step_age", label_visibility="collapsed")
+        st.button(T["next"], key=f"a{i}_next", on_click=_pick_age,
+                  args=(i + 1,), use_container_width=True)
+    if i > 0:
+        st.button(T["back"], key=f"back{i}", on_click=_go, args=(i - 1,))
+    return None
+
+
+def show_results(ui, lang, answers):
     st.subheader(ui["sf_results"])
     hits = find_schemes(answers)
     if not hits:
@@ -224,6 +279,19 @@ def schemes_tab(ui, lang):
         st.caption(SUMMARY[lang]["check_tab"].format(tab=ui["tab_check"]))
     st.caption(ui["sf_disclaimer"])
     st.caption(ui["sf_checked"].format(date=LAST_CHECKED))
+
+
+
+
+def schemes_tab(ui, lang):
+    st.subheader(ui["sf_title"])
+    st.caption(ui["sf_intro"])
+    mode = st.radio(STEP_TEXT[lang]["mode"], ["step", "all"],
+                    format_func=lambda m: STEP_TEXT[lang][m],
+                    horizontal=True, key="sf_mode")
+    answers = one_at_a_time(ui, lang) if mode == "step" else all_at_once(ui)
+    if answers:
+        show_results(ui, lang, answers)
 
 
 lang = st.radio("Language / भाषा / ಭಾಷೆ", list(TEXT.keys()), horizontal=True)
